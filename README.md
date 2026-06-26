@@ -8,6 +8,6 @@ As to begin my explanation for each step of the code and also their purpose, it'
 
 The Claw/Hand of the arm will be it's primary purpose, which is to interact with it's surrounding environment when given the command.
 
-For the electronics, I will be using an estimated amount of 2-3 ESP32 Developer Boards alongside approximately 10-20 SG90 Mirco Servos.
+For the electronics, I will be using an estimated amount of 2-3 ESP32 Developer Boards alongside approximately 10-15 SG90 Mirco Servos.
 Essentially, the method in which the claw will operate will recive signals from a camera that detects the mapping of a hand and translate those movements to the SG90's.
 
