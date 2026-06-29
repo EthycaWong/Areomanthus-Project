@@ -11,7 +11,22 @@ The Claw/Hand of the arm will be it's primary purpose, which is to interact with
 For the electronics, I will be using an estimated amount of 2-3 ESP32 Developer Boards alongside approximately 10-15 SG90 Mirco Servos.
 Essentially, the method in which the claw will operate will recive signals from a camera that detects the mapping of a hand and translate those movements to the SG90's.
 
-The first thing I had to do was code the mapping via camera on python. The best libraries to use for this are cv2 and mediapipe. Essentially, the camera used on my computer will run its standard amount of frames and this only changes when mediapipe begins detecting for my hand whilst cv2 will be used to have mediapipe analyze the frames from the camera. In order to do this, cv2 will constantly take frames and let mediapipe map out the planes of my hand with "landmarkers." The numbers i'm trying to use here are 8 and 4. This is because 8 is the tip of your pointer finger and 4 is the tip of your thumb as seen in the image below.
+The first thing I had to do was code the mapping via camera on python. The best libraries to use for this are cv2 and mediapipe. 
+Essentially, the camera used on my computer will run its standard amount of frames and this only changes when mediapipe begins detecting for my hand whilst cv2 will be used to have mediapipe analyze the frames from the camera as seen in the code below:
+
+```python
+def on_result(result, output_image, timestamp_ms):
+    global latest_result
+    latest_result = result
+```
+cv2 will constantly take frames and let mediapipe map out the planes of my hand with "landmarkers." 
+
+```python
+     global last_pinch_time, is_pinching
+     thumb_tip = hand_landmarks[4]
+     index_tip = hand_landmarks[8]
+```
+The numbers i'm trying to use here are 8 and 4. This is because 8 is the tip of your pointer finger and 4 is the tip of your thumb as seen in the image below.
 
 <img width="1073" height="372" alt="hand-landmarks" src="https://github.com/user-attachments/assets/0b493843-9ff6-492a-93e7-7d689da69190" />
 
@@ -20,6 +35,15 @@ distance = ((thumb_x - index_x) ** 2 + (thumb_y - index_y) ** 2) ** 0.5
 ```
 
 This line of code is the distance formula, basically to calculate the distance between landmarker 8 and 4 and with that data an "if" statement will run to see what is considered "pinching" as a boolean value 'T'
+
+```python
+     if distance < 40:
+          if not is_pinching and current_time - last_pinch_time > cooldown:
+               is_pinching = True
+               last_pinch_time = current_time
+               ser.write(b'T')
+               print(f"Pinch detected! Distance: {distance:.1f}")
+```
 
 However, the issue of repetitive pinching may arise so I added a cooldown:
 
