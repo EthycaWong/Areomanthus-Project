@@ -34,7 +34,7 @@ The numbers i'm trying to use here are 8 and 4. This is because 8 is the tip of 
 distance = ((thumb_x - index_x) ** 2 + (thumb_y - index_y) ** 2) ** 0.5
 ```
 
-This line of code is the distance formula, basically to calculate the distance between landmarker 8 and 4 and with that data an "if" statement will run to see what is considered "pinching" as a boolean value 'T'
+This line of code above is the distance formula, basically to calculate the distance between landmarker 8 and 4 and with that data an "if" statement will run to see what is considered "pinching" as a boolean value 'T' shown below.
 
 ```python
      if distance < 40:
@@ -74,6 +74,18 @@ If the distance in less than 40, then:
                print(f"Pinch detected! Distance: {distance:.1f}")
 ```
 
-We'll send a boolean value over to the ESP32 and reset the cooldown.
+We'll send the boolean value over to the ESP32 and reset the cooldown.
+
+However, detecting hands in general requires a range of assurance. Practically speaking, you need to make sure that you're actually tracking "hands" here, so we need to add a minimum percentage of confidence that mediapipe must have in order to output the landmarkers:
+
+```python
+    base_options = python.BaseOptions(model_asset_path = model_path),
+    running_mode = RunningMode.LIVE_STREAM,
+    num_hands = 1,
+    min_hand_detection_confidence = 0.7,
+    min_tracking_confidence = 0.87,
+    result_callback = on_result,
+```
+
 
 The first inititative I took in order to construct the hand was to 3D model it on Fusion360. 
